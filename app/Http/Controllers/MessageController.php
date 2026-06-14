@@ -2,63 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Message;
+use App\Models\Order;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
-    }
+        $request->validate([
+            'order_id' => ['required', 'exists:orders,id'],
+            'message' => ['required', 'string'],
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
+        $order = Order::findOrFail($request->order_id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
+        if (
+            auth()->id() !== $order->buyer_id &&
+            auth()->id() !== $order->seller_id
+        ) {
+            abort(403);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
+        $receiverId = auth()->id() === $order->buyer_id
+            ? $order->seller_id
+            : $order->buyer_id;
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        Message::create([
+            'sender_id' => auth()->id(),
+            'receiver_id' => $receiverId,
+            'message' => $request->message,
+        ]);
+
+        return redirect()->route('orders.show', $order);
     }
 }

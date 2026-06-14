@@ -53,18 +53,37 @@ class OrderController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-   {
+ * Display the specified resource.
+ */
+public function show(string $id)
+{
     $order = Order::with([
         'listing',
         'buyer',
         'seller'
     ])->findOrFail($id);
 
-    return view('orders.show', compact('order'));
+    if (
+        auth()->id() !== $order->buyer_id &&
+        auth()->id() !== $order->seller_id
+    ) {
+        abort(403);
     }
+
+    $messages = \App\Models\Message::with(['sender', 'receiver'])
+        ->where(function ($query) use ($order) {
+            $query->where('sender_id', $order->buyer_id)
+                ->where('receiver_id', $order->seller_id);
+        })
+        ->orWhere(function ($query) use ($order) {
+            $query->where('sender_id', $order->seller_id)
+                ->where('receiver_id', $order->buyer_id);
+        })
+        ->oldest()
+        ->get();
+
+    return view('orders.show', compact('order', 'messages'));
+}
 
     /**
      * Show the form for editing the specified resource.
@@ -77,7 +96,7 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    
+
     public function update(Request $request, string $id)
     {
     $order = Order::findOrFail($id);
