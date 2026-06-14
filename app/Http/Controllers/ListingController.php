@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Listing;
 use Illuminate\Http\Request;
 
 class ListingController extends Controller
@@ -11,7 +13,11 @@ class ListingController extends Controller
      */
     public function index()
     {
-        //
+        $listings = Listing::with(['category', 'user'])
+        ->latest()
+        ->get();
+
+    return view('listings.index', compact('listings'));
     }
 
     /**
@@ -19,7 +25,9 @@ class ListingController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+
+        return view('listings.create', compact('categories'));
     }
 
     /**
@@ -27,7 +35,23 @@ class ListingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+        'title' => ['required', 'string', 'max:255'],
+        'description' => ['required'],
+        'price' => ['required', 'numeric'],
+        'category_id' => ['required', 'exists:categories,id'],
+    ]);
+
+    Listing::create([
+        'user_id' => auth()->id(),
+        'category_id' => $validated['category_id'],
+        'title' => $validated['title'],
+        'description' => $validated['description'],
+        'price' => $validated['price'],
+        'status' => 'active',
+    ]);
+
+    return redirect()->route('listings.index');
     }
 
     /**
@@ -35,7 +59,9 @@ class ListingController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $listing = Listing::with(['category', 'user'])->findOrFail($id);
+
+        return view('listings.show', compact('listing'));
     }
 
     /**
