@@ -8,83 +8,58 @@ use Illuminate\Http\Request;
 
 class ListingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function create(Category $category = null)
     {
-        $listings = Listing::with(['category', 'user'])
-        ->latest()
-        ->get();
+        if (!$category || $category->parent_id === null) {
+            abort(404);
+        }
 
-    return view('listings.index', compact('listings'));
+        return view('listings.create', compact('category'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        $categories = Category::all();
-
-        return view('listings.create', compact('categories'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
-        'title' => ['required', 'string', 'max:255'],
-        'description' => ['required'],
-        'price' => ['required', 'numeric'],
-        'category_id' => ['required', 'exists:categories,id'],
-    ]);
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required'],
+            'price' => ['required', 'numeric'],
+            'category_id' => ['required', 'exists:categories,id'],
+        ]);
 
-    Listing::create([
-        'user_id' => auth()->id(),
-        'category_id' => $validated['category_id'],
-        'title' => $validated['title'],
-        'description' => $validated['description'],
-        'price' => $validated['price'],
-        'status' => 'active',
-    ]);
+        $listing = Listing::create([
+            'user_id' => auth()->id(),
+            'category_id' => $validated['category_id'],
+            'title' => $validated['title'],
+            'description' => $validated['description'],
+            'price' => $validated['price'],
+            'status' => 'active',
+        ]);
 
-    return redirect()->route('listings.index');
+        return redirect()->route('lots.show', $listing->category_id);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        $listing = Listing::with(['category', 'user'])->findOrFail($id);
+        $listing = Listing::with(['category.parent', 'user'])->findOrFail($id);
 
         return view('listings.show', compact('listing'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $listing = Listing::findOrFail($id);
+
+        if (
+            auth()->id() !== $listing->user_id &&
+            auth()->user()->role?->name !== 'admin'
+        ) {
+            abort(403);
+        }
+
+        $categoryId = $listing->category_id;
+
+        $listing->delete();
+
+        return redirect()->route('lots.show', $categoryId);
     }
 }

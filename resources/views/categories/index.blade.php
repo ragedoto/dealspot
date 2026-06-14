@@ -1,26 +1,47 @@
-<h1>Categories</h1>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Categories
+        </h2>
+    </x-slot>
 
-<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;">
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-    @foreach($categories as $category)
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:40px;">
 
-        <div>
-            <h3>{{ $category->name }}</h3>
+                @foreach($categories as $category)
 
-            @foreach($category->children as $child)
+                    <div>
 
-                <a href="#">
-                    {{ $child->name }}
-                </a>
+                        <h3>
+                            @if($category->children->isNotEmpty())
+                                <a href="{{ route('lots.show', $category->children->first()) }}">
+                                    {{ $category->name }}
+                                </a>
+                            @else
+                                {{ $category->name }}
+                            @endif
+                        </h3>
 
-                @if(!$loop->last)
-                    <span> · </span>
-                @endif
+                        @foreach($category->children as $child)
 
-            @endforeach
+                            <a href="{{ route('lots.show', $child) }}">
+                                {{ $child->name }}
+                            </a>
+
+                            @if(!$loop->last)
+                                <span> · </span>
+                            @endif
+
+                        @endforeach
+
+                    </div>
+
+                @endforeach
+
+            </div>
 
         </div>
-
-    @endforeach
-
-</div>
+    </div>
+</x-app-layout>

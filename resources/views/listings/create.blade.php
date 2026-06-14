@@ -1,7 +1,27 @@
 <h1>Create Listing</h1>
 
-<form method="POST" action="{{ route('listings.store') }}">
+@if(isset($category))
+
+    <p>
+        Category:
+
+        @if($category->parent)
+            {{ $category->parent->name }} → {{ $category->name }}
+        @else
+            {{ $category->name }}
+        @endif
+    </p>
+
+@endif
+
+<form method="POST" action="{{ route('lots.store') }}">
     @csrf
+
+    <input
+        type="hidden"
+        name="category_id"
+        value="{{ $category->id }}"
+    >
 
     <div>
         <label>Title</label>
@@ -20,24 +40,6 @@
     <div>
         <label>Price</label>
         <input type="number" step="0.01" name="price">
-    </div>
-
-    <br>
-
-    <div>
-        <label>Category</label>
-
-        <select name="category_id">
-
-            @foreach($categories as $category)
-
-                <option value="{{ $category->id }}">
-                    {{ $category->name }}
-                </option>
-
-            @endforeach
-
-        </select>
     </div>
 
     <br>

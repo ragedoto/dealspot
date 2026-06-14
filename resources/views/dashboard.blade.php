@@ -15,19 +15,13 @@
 
                     <br>
 
-                    <a href="{{ route('listings.index') }}">
-                        Listings
-                    </a>
-
-                    <br><br>
-
                     <a href="{{ route('orders.index') }}">
                         Orders
                     </a>
 
                     <br><br>
 
-                    <a href="{{ route('categories.index') }}">
+                    <a href="{{ url('/') }}">
                         Categories
                     </a>
 
