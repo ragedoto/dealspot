@@ -8,6 +8,7 @@ use App\Http\Controllers\ListingController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\AdminController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -28,5 +29,9 @@ Route::resource('listings', ListingController::class);
 Route::resource('orders', OrderController::class);
 Route::resource('messages', MessageController::class);
 Route::resource('reviews', ReviewController::class);
+
+Route::get('/admin', [AdminController::class, 'index'])
+    ->middleware(['auth', 'admin'])
+    ->name('admin.index');
 
 require __DIR__.'/auth.php';
