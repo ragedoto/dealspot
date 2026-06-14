@@ -25,7 +25,8 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::resource('categories', CategoryController::class);
-Route::resource('listings', ListingController::class);
+Route::resource('listings', ListingController::class)
+    ->middleware('auth');   
 Route::resource('orders', OrderController::class);
 Route::resource('messages', MessageController::class);
 Route::resource('reviews', ReviewController::class);
