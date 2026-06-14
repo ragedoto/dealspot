@@ -9,6 +9,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ModeratorController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -34,5 +35,9 @@ Route::resource('reviews', ReviewController::class);
 Route::get('/admin', [AdminController::class, 'index'])
     ->middleware(['auth', 'admin'])
     ->name('admin.index');
+
+Route::get('/moderator', [ModeratorController::class, 'index'])
+    ->middleware(['auth', 'moderator'])
+    ->name('moderator.index');
 
 require __DIR__.'/auth.php';

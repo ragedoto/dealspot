@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class SellerMiddleware
+class ModeratorMiddleware
 {
     /**
      * Handle an incoming request.
@@ -21,7 +21,7 @@ class SellerMiddleware
 
         $roleName = auth()->user()->role?->name;
 
-        if (!in_array($roleName, ['seller', 'admin'])) {
+        if (!in_array($roleName, ['moderator', 'admin'])) {
             abort(403);
         }
 
