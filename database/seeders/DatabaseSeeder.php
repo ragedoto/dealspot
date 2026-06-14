@@ -21,16 +21,30 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
         ]);
 
-//      User::factory()->create([
-//          'name' => 'Test User',
-//          'email' => 'test@example.com',
-//      ]);
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
+
+        User::create([
+            'name' => 'User',
+            'email' => 'user@mail.com',
+            'password' => Hash::make('password'),
+            'role_id' => 1,
+        ]);
 
         User::create([
             'name' => 'Admin',
             'email' => 'admin@mail.com',
             'password' => Hash::make('password'),
             'role_id' => 3,
+        ]);
+
+        User::create([
+            'name' => 'Moderator',
+            'email' => 'moderator@mail.com',
+            'password' => Hash::make('password'),
+            'role_id' => 2,
         ]);
     }
 }

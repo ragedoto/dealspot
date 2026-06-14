@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Models\Listing;
 use Illuminate\Http\Request;
 
 class OrderController extends Controller
@@ -11,7 +13,13 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+        $orders = Order::with([
+            'listing',
+            'buyer',
+            'seller'
+        ])->latest()->get();
+
+        return view('orders.index', compact('orders'));
     }
 
     /**
@@ -27,7 +35,17 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $listing = Listing::findOrFail($request->listing_id);
+
+        Order::create([
+            'listing_id' => $listing->id,
+            'buyer_id' => auth()->id(),
+            'seller_id' => $listing->user_id,
+            'price' => $listing->price,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->route('orders.index');
     }
 
     /**
