@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
+use App\Models\Review;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
@@ -27,7 +29,30 @@ class ReviewController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'order_id' => ['required', 'exists:orders,id'],
+            'rating' => ['required', 'integer', 'min:1', 'max:5'],
+            'comment' => ['nullable', 'string'],
+        ]);
+
+        $order = Order::findOrFail($request->order_id);
+
+        if (auth()->id() !== $order->buyer_id) {
+            abort(403);
+        }
+
+        if ($order->status !== 'completed') {
+            abort(403);
+        }
+
+        Review::create([
+            'reviewer_id' => auth()->id(),
+            'reviewed_user_id' => $order->seller_id,
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+        ]);
+
+        return redirect()->route('orders.show', $order);
     }
 
     /**

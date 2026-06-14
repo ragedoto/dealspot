@@ -69,6 +69,76 @@
 
 <hr>
 
+<h2>Reviews</h2>
+
+@foreach($reviews as $review)
+
+    <div style="border:1px solid #ccc; padding:10px; margin-bottom:10px;">
+        <p>
+            Rating:
+            {{ $review->rating }}/5
+        </p>
+
+        <p>
+            Comment:
+            {{ $review->comment }}
+        </p>
+
+        <p>
+            Reviewer:
+            {{ $review->reviewer->name }}
+        </p>
+    </div>
+
+@endforeach
+
+@if(
+    auth()->check() &&
+    auth()->id() === $order->buyer_id &&
+    $order->status === 'completed' &&
+    $reviews->isEmpty()
+)
+
+<form action="{{ route('reviews.store') }}" method="POST">
+    @csrf
+
+    <input
+        type="hidden"
+        name="order_id"
+        value="{{ $order->id }}"
+    >
+
+    <div>
+        <label>Rating</label>
+
+        <select name="rating" required>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+        </select>
+    </div>
+
+    <br>
+
+    <div>
+        <label>Comment</label>
+
+        <textarea name="comment"></textarea>
+    </div>
+
+    <br>
+
+    <button type="submit">
+        Leave Review
+    </button>
+</form>
+
+@endif
+
+<hr>
+
 <h2>Messages</h2>
 
 @foreach($messages as $message)

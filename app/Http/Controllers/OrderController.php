@@ -52,7 +52,7 @@ class OrderController extends Controller
         return redirect()->route('orders.index');
     }
 
-    /**
+/**
  * Display the specified resource.
  */
 public function show(string $id)
@@ -82,7 +82,12 @@ public function show(string $id)
         ->oldest()
         ->get();
 
-    return view('orders.show', compact('order', 'messages'));
+    $reviews = \App\Models\Review::with(['reviewer', 'reviewedUser'])
+        ->where('reviewer_id', $order->buyer_id)
+        ->where('reviewed_user_id', $order->seller_id)
+        ->get();
+
+    return view('orders.show', compact('order', 'messages', 'reviews'));
 }
 
     /**
