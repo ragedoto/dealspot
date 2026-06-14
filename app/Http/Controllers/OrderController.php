@@ -70,24 +70,12 @@ public function show(string $id)
         abort(403);
     }
 
-    $messages = \App\Models\Message::with(['sender', 'receiver'])
-        ->where(function ($query) use ($order) {
-            $query->where('sender_id', $order->buyer_id)
-                ->where('receiver_id', $order->seller_id);
-        })
-        ->orWhere(function ($query) use ($order) {
-            $query->where('sender_id', $order->seller_id)
-                ->where('receiver_id', $order->buyer_id);
-        })
-        ->oldest()
-        ->get();
-
     $reviews = \App\Models\Review::with(['reviewer', 'reviewedUser'])
         ->where('reviewer_id', $order->buyer_id)
         ->where('reviewed_user_id', $order->seller_id)
         ->get();
 
-    return view('orders.show', compact('order', 'messages', 'reviews'));
+    return view('orders.show', compact('order', 'reviews'));
 }
 
     /**
