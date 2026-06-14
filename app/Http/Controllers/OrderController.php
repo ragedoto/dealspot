@@ -17,7 +17,11 @@ class OrderController extends Controller
             'listing',
             'buyer',
             'seller'
-        ])->latest()->get();
+])
+            ->where('buyer_id', auth()->id())
+            ->orWhere('seller_id', auth()->id())
+            ->latest()
+            ->get();
 
         return view('orders.index', compact('orders'));
     }
