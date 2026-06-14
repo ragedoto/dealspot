@@ -56,8 +56,14 @@ class OrderController extends Controller
      * Display the specified resource.
      */
     public function show(string $id)
-    {
-        //
+   {
+    $order = Order::with([
+        'listing',
+        'buyer',
+        'seller'
+    ])->findOrFail($id);
+
+    return view('orders.show', compact('order'));
     }
 
     /**
@@ -71,9 +77,24 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
+    
     public function update(Request $request, string $id)
     {
-        //
+    $order = Order::findOrFail($id);
+
+    if (auth()->id() !== $order->seller_id) {
+        abort(403);
+    }
+
+    $request->validate([
+        'status' => ['required', 'in:completed,cancelled'],
+    ]);
+
+    $order->update([
+        'status' => $request->status,
+    ]);
+
+    return redirect()->route('orders.show', $order);
     }
 
     /**
