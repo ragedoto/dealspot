@@ -1,54 +1,63 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            Create Listing
+        </h2>
+    </x-slot>
 
-<h1>Create Listing</h1>
+    <div class="py-12">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
 
-@if(isset($category))
+            <div class="bg-white shadow sm:rounded-lg">
+                <div class="p-6">
 
-    <p>
-        Category:
+                    <form method="POST" action="{{ route('lots.store') }}">
+                        @csrf
 
-        @if($category->parent)
-            {{ $category->parent->name }} → {{ $category->name }}
-        @else
-            {{ $category->name }}
-        @endif
-    </p>
+                        <input type="hidden"
+                               name="category_id"
+                               value="{{ $category->id }}">
 
-@endif
+                        <div class="mb-4">
+                            <label class="block mb-2">Title</label>
 
-<form method="POST" action="{{ route('lots.store') }}">
-    @csrf
+                            <input
+                                type="text"
+                                name="title"
+                                class="w-full border-gray-300 rounded-md shadow-sm"
+                            >
+                        </div>
 
-    <input
-        type="hidden"
-        name="category_id"
-        value="{{ $category->id }}"
-    >
+                        <div class="mb-4">
+                            <label class="block mb-2">Description</label>
 
-    <div>
-        <label>Title</label>
-        <input type="text" name="title">
+                            <textarea
+                                name="description"
+                                rows="6"
+                                class="w-full border-gray-300 rounded-md shadow-sm"
+                            ></textarea>
+                        </div>
+
+                        <div class="mb-6">
+                            <label class="block mb-2">Price</label>
+
+                            <input
+                                type="number"
+                                step="0.01"
+                                name="price"
+                                class="w-full border-gray-300 rounded-md shadow-sm"
+                            >
+                        </div>
+
+                        <x-primary-button>
+                            Create Listing
+                        </x-primary-button>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
     </div>
-
-    <br>
-
-    <div>
-        <label>Description</label>
-        <textarea name="description"></textarea>
-    </div>
-
-    <br>
-
-    <div>
-        <label>Price</label>
-        <input type="number" step="0.01" name="price">
-    </div>
-
-    <br>
-
-    <button type="submit">
-        Create Listing
-    </button>
-</form>
-
 </x-app-layout>

@@ -1,83 +1,112 @@
 <x-app-layout>
 
-<h1>
-    {{ $parentCategory->name }} {{ $activeCategory->name }}
-</h1>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ $parentCategory->name }} — {{ $activeCategory->name }}
+        </h2>
+    </x-slot>
 
-@if($siblingCategories->isNotEmpty())
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-    <div>
-        @foreach($siblingCategories as $child)
+            <div class="bg-white shadow sm:rounded-lg">
+                <div class="p-6">
 
-            @if($child->id === $activeCategory->id)
-                <strong>{{ $child->name }}</strong>
-            @else
-                <a href="{{ route('lots.show', $child) }}">
-                    {{ $child->name }}
-                </a>
-            @endif
+                    @if($siblingCategories->isNotEmpty())
 
-            @if(!$loop->last)
-                <span> · </span>
-            @endif
+                        <div class="flex flex-wrap gap-2 mb-6">
 
-        @endforeach
-    </div>
+                            @foreach($siblingCategories as $child)
 
-    <hr>
+                                @if($child->id === $activeCategory->id)
 
-@endif
+                                    <span class="inline-flex items-center px-4 py-2 bg-gray-800 rounded-md text-xs font-semibold text-white uppercase tracking-widest">
+                                        {{ $child->name }}
+                                    </span>
 
-@if(auth()->check())
+                                @else
 
-    <a href="{{ route('lots.create-listing', $activeCategory) }}">
-        Create Listing
-    </a>
+                                    <a
+                                        href="{{ route('lots.show', $child) }}"
+                                        class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md text-xs font-semibold text-gray-700 uppercase tracking-widest hover:bg-gray-50"
+                                    >
+                                        {{ $child->name }}
+                                    </a>
 
-    <hr>
+                                @endif
 
-@endif
+                            @endforeach
 
-<h2>Listings</h2>
+                        </div>
 
-@if($listings->isEmpty())
+                    @endif
 
-    <p>No listings found.</p>
+                    @auth
 
-@else
+                        <div class="mb-6">
 
-    @foreach($listings as $listing)
+                            <a
+                                href="{{ route('lots.create-listing', $activeCategory) }}"
+                                class="inline-flex items-center px-4 py-2 bg-gray-800 rounded-md text-xs font-semibold text-white uppercase tracking-widest hover:bg-gray-700"
+                            >
+                                Create Listing
+                            </a>
 
-        <div style="border:1px solid #ccc; padding:15px; margin-bottom:15px;">
+                        </div>
 
-            <h3>
-                <a href="{{ route('lots.listing.show', $listing) }}">
-                    {{ $listing->title }}
-                </a>
-            </h3>
+                    @endauth
 
-            <p>{{ $listing->description }}</p>
+                    <h3 class="text-lg font-medium text-gray-900">
+                        Listings
+                    </h3>
 
-            <p>
-                Price:
-                {{ $listing->price }}
-            </p>
+                    <p class="mt-1 text-sm text-gray-600">
+                        Available offers in this category.
+                    </p>
 
-            <p>
-                Seller:
-                {{ $listing->user->name }}
-            </p>
+                    <div class="mt-6 space-y-4">
+
+                        @forelse($listings as $listing)
+
+                            <div class="border rounded-lg p-4">
+
+                                <a
+                                    href="{{ route('lots.listing.show', $listing) }}"
+                                    class="font-semibold text-lg text-gray-900"
+                                >
+                                    {{ $listing->title }}
+                                </a>
+
+                                <p class="text-gray-600 mt-2">
+                                    {{ $listing->description }}
+                                </p>
+
+                                <div class="mt-3">
+                                    <strong>Seller:</strong>
+                                    {{ $listing->user->name }}
+                                </div>
+
+                                <div>
+                                    <strong>Price:</strong>
+                                    {{ $listing->price }}
+                                </div>
+
+                            </div>
+
+                        @empty
+
+                            <p class="text-gray-500">
+                                No listings found.
+                            </p>
+
+                        @endforelse
+
+                    </div>
+
+                </div>
+            </div>
 
         </div>
-
-    @endforeach
-
-@endif
-
-<hr>
-
-<a href="/">
-    Back
-</a>
+    </div>
 
 </x-app-layout>

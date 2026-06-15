@@ -1,78 +1,111 @@
 <x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ $listing->title }}
+        </h2>
+    </x-slot>
 
-<h1>{{ $listing->title }}</h1>
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-<p>
-    Category:
+            <div class="bg-white shadow sm:rounded-lg">
+                <div class="p-6">
 
-    @if($listing->category->parent)
-        {{ $listing->category->parent->name }} → {{ $listing->category->name }}
-    @else
-        {{ $listing->category->name }}
-    @endif
-</p>
+                    <h3 class="text-lg font-medium text-gray-900">
+                        Listing Information
+                    </h3>
 
-<p>
-    Seller:
-    {{ $listing->user->name }}
-</p>
+                    <p class="mt-1 text-sm text-gray-600">
+                        View listing details and create an order.
+                    </p>
 
-<p>
-    Price:
-    {{ $listing->price }}
-</p>
+                    <div class="mt-6 space-y-4">
 
-<p>
-    Status:
-    {{ $listing->status }}
-</p>
+                        <div>
+                            <span class="font-semibold">Category:</span>
 
-<hr>
+                            @if($listing->category->parent)
+                                {{ $listing->category->parent->name }} → {{ $listing->category->name }}
+                            @else
+                                {{ $listing->category->name }}
+                            @endif
+                        </div>
 
-<p>
-    {{ $listing->description }}
-</p>
+                        <div>
+                            <span class="font-semibold">Seller:</span>
+                            {{ $listing->user->name }}
+                        </div>
 
-@if(auth()->check() && auth()->id() !== $listing->user_id)
+                        <div>
+                            <span class="font-semibold">Price:</span>
+                            {{ $listing->price }}
+                        </div>
 
-<form action="{{ route('orders.store') }}" method="POST">
-    @csrf
+                        <div>
+                            <span class="font-semibold">Status:</span>
+                            {{ $listing->status }}
+                        </div>
 
-    <input
-        type="hidden"
-        name="listing_id"
-        value="{{ $listing->id }}"
-    >
+                        <div>
+                            <span class="font-semibold">Description:</span>
+                            <p class="mt-2 text-gray-700">
+                                {{ $listing->description }}
+                            </p>
+                        </div>
 
-    <button type="submit">
-        Buy
-    </button>
-</form>
+                    </div>
 
-<hr>
+                    <div class="mt-6 flex gap-3">
 
-@endif
+                        @if(auth()->check() && auth()->id() !== $listing->user_id)
 
-@if(
-    auth()->check() &&
-    auth()->id() === $listing->user_id
-)
+                            <form action="{{ route('orders.store') }}" method="POST">
+                                @csrf
 
-<form action="{{ route('lots.listing.destroy', $listing) }}" method="POST">
-    @csrf
-    @method('DELETE')
+                                <input
+                                    type="hidden"
+                                    name="listing_id"
+                                    value="{{ $listing->id }}"
+                                >
 
-    <button type="submit">
-        Delete Listing
-    </button>
-</form>
+                                <x-primary-button>
+                                    Buy
+                                </x-primary-button>
+                            </form>
 
-<hr>
+                        @endif
 
-@endif
+                        @if(
+                            auth()->check() &&
+                            auth()->id() === $listing->user_id
+                        )
 
-<a href="{{ route('lots.show', $listing->category_id) }}">
-    Back to listings
-</a>
+                            <form action="{{ route('lots.listing.destroy', $listing) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
 
+                                <button
+                                    type="submit"
+                                    class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500"
+                                >
+                                    Delete Listing
+                                </button>
+                            </form>
+
+                        @endif
+
+                        <a
+                            href="{{ route('lots.show', $listing->category_id) }}"
+                            class="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50"
+                        >
+                            Back to listings
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
 </x-app-layout>

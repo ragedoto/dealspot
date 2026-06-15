@@ -1,5 +1,4 @@
 <x-app-layout>
-
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             My Listings
@@ -7,52 +6,54 @@
     </x-slot>
 
     <div class="py-12">
-
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            @if($listings->isEmpty())
+            <div class="bg-white shadow sm:rounded-lg">
+                <div class="p-6">
 
-                <div class="bg-white shadow sm:rounded-lg p-6">
-                    You don't have any listings yet.
-                </div>
+                    <h3 class="text-lg font-medium text-gray-900">
+                        Your Listings
+                    </h3>
 
-            @else
+                    <p class="mt-1 text-sm text-gray-600">
+                        Manage all listings you have created.
+                    </p>
 
-                @foreach($listings as $listing)
+                    <div class="mt-6 space-y-4">
 
-                    <div class="bg-white shadow sm:rounded-lg p-6 mb-4">
+                        @forelse($listings as $listing)
 
-                        <h3 class="text-lg font-bold">
-                            <a href="{{ route('lots.listing.show', $listing) }}">
-                                {{ $listing->title }}
-                            </a>
-                        </h3>
+                            <div class="border rounded-lg p-4">
 
-                        <p class="text-gray-600 mt-2">
-                            {{ $listing->description }}
-                        </p>
+                                <a href="{{ route('lots.listing.show', $listing) }}"
+                                   class="font-semibold text-lg text-gray-900">
+                                    {{ $listing->title }}
+                                </a>
 
-                        <p class="mt-3">
-                            Category:
-                            @if($listing->category->parent)
-                                {{ $listing->category->parent->name }} → {{ $listing->category->name }}
-                            @else
-                                {{ $listing->category->name }}
-                            @endif
-                        </p>
+                                <p class="text-gray-600 mt-2">
+                                    {{ $listing->description }}
+                                </p>
 
-                        <p class="font-semibold mt-1">
-                            Price: {{ $listing->price }}
-                        </p>
+                                <p class="mt-2">
+                                    <strong>Price:</strong>
+                                    {{ $listing->price }}
+                                </p>
+
+                            </div>
+
+                        @empty
+
+                            <p class="text-gray-500">
+                                You don't have any listings yet.
+                            </p>
+
+                        @endforelse
 
                     </div>
 
-                @endforeach
-
-            @endif
+                </div>
+            </div>
 
         </div>
-
     </div>
-
 </x-app-layout>
