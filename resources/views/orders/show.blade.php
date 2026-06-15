@@ -1,3 +1,5 @@
+<x-app-layout>
+
 <h1>Order #{{ $order->id }}</h1>
 
 <p>
@@ -142,3 +144,5 @@
 <a href="{{ route('orders.index') }}">
     Back to orders
 </a>
+
+</x-app-layout>

@@ -1,3 +1,5 @@
+<x-app-layout>
+
 <h1>{{ $listing->title }}</h1>
 
 <p>
@@ -72,3 +74,5 @@
 <a href="{{ route('lots.show', $listing->category_id) }}">
     Back to listings
 </a>
+
+</x-app-layout>

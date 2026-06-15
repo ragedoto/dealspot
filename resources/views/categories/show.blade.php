@@ -1,3 +1,5 @@
+<x-app-layout>
+
 <h1>
     {{ $parentCategory->name }} {{ $activeCategory->name }}
 </h1>
@@ -77,3 +79,5 @@
 <a href="/">
     Back
 </a>
+
+</x-app-layout>

@@ -1,3 +1,5 @@
+<x-app-layout>
+
 <h1>Create Listing</h1>
 
 @if(isset($category))
@@ -48,3 +50,5 @@
         Create Listing
     </button>
 </form>
+
+</x-app-layout>
