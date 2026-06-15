@@ -46,6 +46,10 @@
 
                         <x-slot name="content">
 
+                            <x-dropdown-link :href="route('my-listings')">
+                                My Listings
+                            </x-dropdown-link>
+
                             <x-dropdown-link :href="route('orders.index')">
                                 Orders
                             </x-dropdown-link>

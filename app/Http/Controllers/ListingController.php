@@ -38,6 +38,16 @@ class ListingController extends Controller
         return redirect()->route('lots.show', $listing->category_id);
     }
 
+    public function myListings()
+    {
+        $listings = Listing::with('category')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+        return view('listings.my', compact('listings'));
+    }
+
     public function show(string $id)
     {
         $listing = Listing::with(['category.parent', 'user'])->findOrFail($id);
